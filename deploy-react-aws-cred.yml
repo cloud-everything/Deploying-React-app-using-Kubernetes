@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gratitude-cube
+  labels:
+    app: grat1
+spec:
+  replicas: 3  # Number of pods to run
+  selector:
+    matchLabels:
+      app: gratitude-cube  # This should match the label in the Pod template
+  template:
+    metadata:
+      labels:
+        app: gratitude-cube  # Labels in the Pod template should match the selector
+    spec:
+      containers:
+        - name: gratitude-app
+          image: 891377186209.dkr.ecr.us-east-1.amazonaws.com/vishal/gratitude_app  # Replace with your Docker image
+          ports:
+            - containerPort: 80  # Port your app is running on inside the container
+      imagePullSecrets:
+        - name: aws-credentials  # The name of the Secret containing your AWS credentials
