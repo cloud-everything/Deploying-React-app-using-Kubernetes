@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1 #if we wanted to deploy ingress instead of loadbalancer
+kind: Ingress
+metadata:
+  name: gratitude-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gratitudeservice
+                port:
+                  number: 80
+

@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gratitude-kube
+  namespace: vishal
+  labels:
+    app: gratitude-kube
+spec:
+  replicas: 3  # Number of pods to run
+  selector:
+    matchLabels:
+      app: gratitude-kube  # This should match the label in the Pod template
+  template:
+    metadata:
+      labels:
+        app: gratitude-kube  # Labels in the Pod template should match the selector
+    spec:
+      containers:
+        - name: gratitude-app
+          image: gratituderegistry.azurecr.io/gratitude_image/image1  # Replace with your Docker 
+          ports:
+            - containerPort: 80  # Port your app is running on inside the container

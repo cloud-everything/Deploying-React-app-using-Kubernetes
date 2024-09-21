@@ -1,0 +1,38 @@
+#=====start Docker desktop
+#=====create a repo in azure console
+#=====login to Azure in cli
+az login
+az acr login --name gratitudeRegistry
+
+
+#=====push image to Azure
+docker tag gratitude_app gratituderegistry.azurecr.io/gratituderegistry/image1
+docker push gratituderegistry.azurecr.io/gratituderegistry/image1
+
+#======connect to Azure kuberentes service via cloud shell
+az account set --subscription 78feeasd73-a3bc-asdbdb-89c4-dabasdf2812b #Set the cluster subscription
+az aks get-credentials --resource-group kubernetes-deployment --name gratitudeCluster --overwrite-existing #Download cluster credentials
+
+#=====create a kubernetes cluster in azure console and switch to that namespace
+kubectl create namespace vishal
+kubectl config set-context --current --namespace=vishal
+kubectl get deployments --all-namespaces=true
+kubectl get deployments --namespace <namespace-name>
+kubectl describe deployment <deployment-name> --namespace <namespace-name>
+kubectl apply -f azure-deploy.yml
+
+
+#=====connect akscluster to containerregistry
+az aks update --resource-group <your-resource-group> --name <your-aks-cluster> --attach-acr <your-acr-name>
+
+
+#========launch a kubernetes service and portforwarding to check if the deployments are successful
+kubectl apply -f azure-service.yml
+kubectl port-forward pod/gratitude-kube-6bcdc4d55f-7n5sr 80:80
+
+
+#=====create a ingress based on host based routing or path based routing
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx # Add the Helm repository for NGINX Ingress
+helm repo update # Update Helm repositories
+helm install my-nginx ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace # Install the NGINX Ingress controller
+
