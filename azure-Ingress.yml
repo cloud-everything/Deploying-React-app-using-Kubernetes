@@ -2,13 +2,14 @@ apiVersion: networking.k8s.io/v1 #if we wanted to deploy ingress instead of load
 kind: Ingress
 metadata:
   name: gratitude-ingress
-  #namespace: ingress-nginx
+  namespace: vishal
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 
 spec:
+  ingressClassName: nginx
   rules:
-    - host: kuberdemo.info
+    #- host: kuberdemo.info
     - http:
         paths:
           - path: /
@@ -18,4 +19,7 @@ spec:
                 name: frontendservice
                 port:
                   number: 80
-
+status:
+  loadBalancer:
+    ingress:
+    - ip: 4.224.112.66

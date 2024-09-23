@@ -2,7 +2,7 @@ apiVersion: v1  #if we wanted to deploy loadbalancer instead of ingress
 kind: Service
 metadata:
   name: frontendservice
-  #namespace: vishal
+  namespace: vishal
 spec:
   type: ClusterIP
   selector:
