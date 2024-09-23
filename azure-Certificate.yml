@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: letsencrypt-prod
+  namespace: default
+spec:
+  secretName: vishal-10071999
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: kuberentes.vishalgandla.online.com
+  dnsNames:
+    - kuberentes.vishalgandla.online.com

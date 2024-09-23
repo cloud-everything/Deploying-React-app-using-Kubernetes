@@ -1,3 +1,32 @@
+#====================for http only=================
+# apiVersion: networking.k8s.io/v1 #if we wanted to deploy ingress instead of loadbalancer
+# kind: Ingress
+# metadata:
+#   name: gratitude-ingress
+#   namespace: vishal
+#   annotations:
+#     nginx.ingress.kubernetes.io/rewrite-target: /
+
+# spec:
+#   ingressClassName: nginx
+#   rules:
+#     - host: kubernetes.vishalgandla.online
+#       http:
+#         paths:
+#           - path: /
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: frontendservice
+#                 port:
+#                   number: 80
+
+
+# status:
+#   loadBalancer:
+#     ingress:
+#     - ip: 4.224.112.66
+#========================http+tls===========================
 apiVersion: networking.k8s.io/v1 #if we wanted to deploy ingress instead of loadbalancer
 kind: Ingress
 metadata:
@@ -5,12 +34,16 @@ metadata:
   namespace: vishal
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - kubernetes.vishalgandla.online
+      secretName: vishal-10071999
   rules:
-    #- host: kuberdemo.info
-    - http:
+    - host: kubernetes.vishalgandla.online
+      http:
         paths:
           - path: /
             pathType: Prefix
@@ -19,7 +52,3 @@ spec:
                 name: frontendservice
                 port:
                   number: 80
-status:
-  loadBalancer:
-    ingress:
-    - ip: 4.224.112.66

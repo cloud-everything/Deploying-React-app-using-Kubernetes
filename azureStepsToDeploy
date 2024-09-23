@@ -15,11 +15,14 @@ az account set --subscription 78feeasd73-a3bc-asdbdb-89c4-dabasdf2812b #Set the 
 az aks get-credentials --resource-group kubernetes-deployment --name gratitudeCluster --overwrite-existing #Download cluster credentials
 
 #=====create a kubernetes cluster in azure console and switch to that namespace
+kubectl config get-contexts #check all the clusters
+kubectl config current-context #check the current cluster you are using
 kubectl create namespace vishal
 kubectl config set-context --current --namespace=vishal
 kubectl get deployments --all-namespaces=true
 kubectl get deployments --namespace <namespace-name>
 kubectl describe deployment <deployment-name> --namespace <namespace-name>
+kubectl exec -it gratitude-kube-6bcdc4d55f-5bclz -- bin/sh
 kubectl apply -f azure-deploy.yml
 
 
@@ -51,6 +54,11 @@ kubectl apply -f azure-LoadBalancer-service.yml #use the ExternalIP
 #https://kubernetes.github.io/ingress-nginx/deploy/#quick-start
 #==============================================test with ingress demo===================================================
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.2/deploy/static/provider/cloud/deploy.yaml
+#or can use helm but it is not working for some reason
+helm upgrade --install ingress-nginx ingress-nginx \
+  --repo https://kubernetes.github.io/ingress-nginx \
+  --namespace ingress-nginx --create-namespace
+
 kubectl get pods --namespace=ingress-nginx
 kubectl create ingress demo-localhost --class=nginx \
   --rule="demo.localdev.me/*=demo:80"
@@ -64,3 +72,21 @@ kubectl apply -f azure-deploy.yml
 kubectl apply -f azure-ClusterIP-service.yml
 kubectl port-forward svc/frontendservice 80:80 #port forward to check
 kubectl apply -f azure-Ingress.yml 
+#make sure the class name is "ingressClassName: nginx" present in ingress spec
+#check the host part and comment it if you are accessing only using ip address
+#if host is present make sure the azure-Ingress file is correct
+using route53 or azure dns connect it to domain
+
+
+ #=================================install certificates using cert-manager==========================================
+ #go to certmanager documentation ===========https://cert-manager.io/docs/installation/kubectl/
+ #go to ingress cert-manager documentation ===========https://cert-manager.io/docs/tutorials/acme/nginx-ingress/
+ kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.15.3/cert-manager.yaml
+ kubectl get pods --namespace cert-manager  #check for the pods 
+ #make sure the secrets match and domain names are all same
+ kubectl apply -f azure-ClusterIssuer.yml #deploy always in cert-manager namespace
+ kubectl apply -f azure-Certificate.yml   #apply the certificate manifest in ingress namespace
+ kubectl apply -f azure-Ingress.yml      #update the ingress with tls configuration and apply the manifest
+ kubectl get certificate
+ kubectl describe certificate letsencrypt-prod-key
+ kubectl describe secret letsencrypt-prod-key
