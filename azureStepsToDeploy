@@ -58,19 +58,9 @@ edit the ingress and remove the host part so that u can check access with ip add
 kubectl port-forward --namespace=ingress-nginx service/ingress-nginx-controller 8080:80
 
 
-
-
 #===============================================================sample nginx 
-$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.2/deploy/static/provider/cloud/deploy.yaml
-G VISHAL@DESKTOP-20BA5T1 MINGW64 ~/OneDrive/Desktop/temp/CLOUD DEMO/CHAPTER-4
-$ kubectl get pods
-NAME                                        READY   STATUS      RESTARTS   AGE
-ingress-nginx-admission-create-vvbf6        0/1     Completed   0          43s
-ingress-nginx-admission-patch-mgmzm         0/1     Completed   0          42s
-ingress-nginx-controller-66f986c956-7p6mz   1/1     Running     0          44s
-
-G VISHAL@DESKTOP-20BA5T1 MINGW64 ~/OneDrive/Desktop/temp/CLOUD DEMO/CHAPTER-4
-$ kubectl get svc
-NAME                                 TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)                      AGE
-ingress-nginx-controller             LoadBalancer   10.0.178.30    4.224.112.66   80:32758/TCP,443:31685/TCP   2m14s
-ingress-nginx-controller-admission   ClusterIP      10.0.206.120   <none>         443/TCP                      2m13s
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.2/deploy/static/provider/cloud/deploy.yaml
+kubectl apply -f azure-deploy.yml 
+kubectl apply -f azure-ClusterIP-service.yml
+kubectl port-forward svc/frontendservice 80:80 #port forward to check
+kubectl apply -f azure-Ingress.yml 
