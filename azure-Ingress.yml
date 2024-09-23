@@ -2,18 +2,20 @@ apiVersion: networking.k8s.io/v1 #if we wanted to deploy ingress instead of load
 kind: Ingress
 metadata:
   name: gratitude-ingress
+  #namespace: ingress-nginx
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 
 spec:
   rules:
+    - host: kuberdemo.info
     - http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: gratitudeservice
+                name: frontendservice
                 port:
                   number: 80
 

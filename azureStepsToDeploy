@@ -1,0 +1,76 @@
+#=====start Docker desktop
+#=====create a repo in azure console
+#=====login to Azure in cli
+az login
+az acr login --name gratitudeRegistry
+
+
+#=====push image to Azure
+docker build -t gratitude_app:latest .
+docker tag gratitude_app gratituderegistry.azurecr.io/gratituderegistry/image1
+docker push gratituderegistry.azurecr.io/gratituderegistry/image1
+
+#======connect to Azure kuberentes service via cloud shell
+az account set --subscription 78feeasd73-a3bc-asdbdb-89c4-dabasdf2812b #Set the cluster subscription
+az aks get-credentials --resource-group kubernetes-deployment --name gratitudeCluster --overwrite-existing #Download cluster credentials
+
+#=====create a kubernetes cluster in azure console and switch to that namespace
+kubectl create namespace vishal
+kubectl config set-context --current --namespace=vishal
+kubectl get deployments --all-namespaces=true
+kubectl get deployments --namespace <namespace-name>
+kubectl describe deployment <deployment-name> --namespace <namespace-name>
+kubectl apply -f azure-deploy.yml
+
+
+#=====connect akscluster to containerregistry
+az aks update --resource-group <your-resource-group> --name <your-aks-cluster> --attach-acr <your-acr-name>
+
+
+#========launch a kubernetes Load balancer service and portforwarding to check if the deployments are successful
+kubectl apply -f azure-service.yml #use the Ip address to connect to the app on port 80
+
+
+#================================================================
+#================================================================
+#================================================================
+#================================================================
+#==========1)launch a Load Balancer service and check to see if you are able to connect via external Ip address
+kubectl apply -f azure-LoadBalancer-service.yml #use the ExternalIP
+
+
+#======================================OR===================================
+
+
+#==========2)launch a ClusterIp service and connect to kind Ingress to provide a external IO
+#You need to have an Ingress controller (like NGINX) running in your cluster for the Ingress resource to work
+# . Without an Ingress controller,  the Ingress resource won't be able to route traffic.
+
+#===========================================================================================================
+#https://stackoverflow.com/questions/59844622/ingress-configuration-for-k8s-in-different-namespaces
+#https://kubernetes.github.io/ingress-nginx/deploy/#quick-start
+#==============================================test with ingress demo===================================================
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.2/deploy/static/provider/cloud/deploy.yaml
+kubectl get pods --namespace=ingress-nginx
+kubectl create ingress demo-localhost --class=nginx \
+  --rule="demo.localdev.me/*=demo:80"
+edit the ingress and remove the host part so that u can check access with ip address
+kubectl port-forward --namespace=ingress-nginx service/ingress-nginx-controller 8080:80
+
+
+
+
+#===============================================================sample nginx 
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.2/deploy/static/provider/cloud/deploy.yaml
+G VISHAL@DESKTOP-20BA5T1 MINGW64 ~/OneDrive/Desktop/temp/CLOUD DEMO/CHAPTER-4
+$ kubectl get pods
+NAME                                        READY   STATUS      RESTARTS   AGE
+ingress-nginx-admission-create-vvbf6        0/1     Completed   0          43s
+ingress-nginx-admission-patch-mgmzm         0/1     Completed   0          42s
+ingress-nginx-controller-66f986c956-7p6mz   1/1     Running     0          44s
+
+G VISHAL@DESKTOP-20BA5T1 MINGW64 ~/OneDrive/Desktop/temp/CLOUD DEMO/CHAPTER-4
+$ kubectl get svc
+NAME                                 TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)                      AGE
+ingress-nginx-controller             LoadBalancer   10.0.178.30    4.224.112.66   80:32758/TCP,443:31685/TCP   2m14s
+ingress-nginx-controller-admission   ClusterIP      10.0.206.120   <none>         443/TCP                      2m13s

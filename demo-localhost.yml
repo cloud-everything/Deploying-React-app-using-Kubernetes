@@ -1,0 +1,30 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  creationTimestamp: "2024-09-23T01:54:12Z"
+  generation: 1
+  name: demo-localhost
+  namespace: ingress-nginx
+  resourceVersion: "2866"
+  uid: 7f9cb770-532e-4fee-9f87-75478dae68a6
+spec:
+  ingressClassName: nginx
+  rules:
+  # - host: demo.localdev.me
+  - http:
+      paths:
+      - backend:
+          service:
+            name: demo
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+status:
+  loadBalancer:
+    ingress:
+    - ip: 4.224.112.66
