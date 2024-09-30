@@ -87,7 +87,7 @@ kubectl apply -f azure-Ingress.yml
  kubectl get pods --namespace cert-manager  #check for the pods 
  #make sure the secrets match and domain names are all same
  kubectl apply -f azure-ClusterIssuer.yml #deploy always in cert-manager namespace
- kubectl config set-context --current --namespace=ingress-nginx
+ kubectl config set-context --current --namespace=ingress-nginx #switch to ingress namespace
  kubectl apply -f azure-Certificate.yml   #apply the certificate manifest in ingress namespace
  kubectl apply -f azure-Ingress.yml      #update the ingress with tls configuration and apply the manifest
  kubectl get certificate
