@@ -17,6 +17,7 @@ spec:
     spec:
       containers:
         - name: gratitude-app
-          image: gratituderegistry.azurecr.io/gratitude_image/image1  # Replace with your Docker 
+          image: gratituderegistry.azurecr.io/gratituderegistry/image1  # Replace with your Docker 
           ports:
             - containerPort: 80  # Port your app is running on inside the container
+

@@ -1,4 +1,4 @@
-#====================for http only=================
+#====================for ip address only=================
 # apiVersion: networking.k8s.io/v1 #if we wanted to deploy ingress instead of loadbalancer
 # kind: Ingress
 # metadata:
@@ -11,7 +11,7 @@
 #   ingressClassName: nginx
 #   rules:
 #     - host: kubernetes.vishalgandla.online
-#       http:
+#     -  http:
 #         paths:
 #           - path: /
 #             pathType: Prefix
@@ -22,10 +22,6 @@
 #                   number: 80
 
 
-# status:
-#   loadBalancer:
-#     ingress:
-#     - ip: 4.224.112.66
 #========================http+tls===========================
 apiVersion: networking.k8s.io/v1 #if we wanted to deploy ingress instead of loadbalancer
 kind: Ingress
